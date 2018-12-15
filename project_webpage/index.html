@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta charset="utf-8">
+      <title>Deep Learning Class Project
+         | Georgia Tech | Fall 2018: CS 4803 / 7643
+      </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="">
+      <meta name="author" content="Nikhita" >
+      <!-- Le styles -->  
+      <link href="css/bootstrap.css" rel="stylesheet">
+      <style>
+         body {
+         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+         }
+         .vis {
+         color: #3366CC;
+         }
+         .data {
+         color: #FF9900;
+         }
+         .column {
+         float: left;
+         width: 33.33%;
+         padding: 5px;
+         }
+         /* Clearfix (clear floats) */
+         .row::after {
+         content: "";
+         clear: both;
+         display: table;
+         }
+      </style>
+      <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+   </head>
+   <body>
+      <div class="container">
+         <div class="page-header">
+            <!-- Title and Name --> 
+            <h1>
+               Improving Cover Pictures for Yelp Businesses
+            </h1>
+            <span style="font-size: 20px; line-height: 1.5em;"><strong>Nikhita Karnati (nkarnati3@gatech.edu)</strong></span><br>
+            <span style="font-size: 18px; line-height: 1.5em;">Fall 2018 CS 4803 / 7643 Deep Learning: Class Project</span><br>
+            <span style="font-size: 18px; line-height: 1.5em;">Georgia Tech</span>
+            
+            <hr>
+            <!-- Introduction -->
+            <h2>Introduction / Background / Motivation</h2>
+            <h4>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</h4>
+            Which one among the below two pictures would make you pick the Restaurant?
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/food_in_restautant_person_with_food.png">
+            </div>
+            <br><br>
+            Most people would say the one on the left. What are the issues in the photo on the right?
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/person_with_food_analysis.png">
+            </div>
+            <br><br>
+            People often times rely on ratings and reviews to make decisions regarding going to a restaurant, booking a specific hotel, buying something online, etc. A website like Yelp can be useful for users who want to pick the best option they can, and spend less time and money on the things that they won’t like. Pictures of food, interior or drinks are really helpful when picking a restaurant, but there are times that the pictures people post on Yelp are blurry, or irrelevant. It can be hard to navigate through all of those images to find something that is actually informative and with good quality. <br><br> An example of a cover page of a Restaurant can be seen below. Most of the cover pictures give less information and are definitely not persuasive to pick the Restaurant.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 400px;" alt="" src="images/restaurant_coverpage.png">
+            </div>
+            <br><br>
+            The motivation for the project is the dataset challenge posted by Yelp<sup><a href="#ref1">[1]</a></sup>. They posted a huge dataset and challenged students to find something interesting. Creating a model to find “good” photos using them is being tried. The concept of being “good” is about both the quality of the picture and how informative it is. The concept of informative is kind of subjective so I took up the definition as food, drinks, inside and outside with not much people cluttering in the photo. That is because they give general idea on a Restaurant and what a normal user would look for in choosing a Restaurant.
+            <br>
+            <h4>How is it done today, and what are the limits of current practice?</h4>
+            Currently, Yelp is using a model with Convolutional Neural Networks (CNNs) to classify photos as beautiful or not<sup><a href="#ref2">[2]</a></sup>. As manually labelling hundreds of photos as beautiful or not is costly, time-consuming, and highly dependent on the preferences of graders, they created training data by considering good proxy for quality as whether a photo was taken by a digital single-lens reflex camera, or DSLR. The justification given was that as these cameras give the photographer more control over which parts of the image are in focus and further that DSLR sensors are larger and more sensitive to light, allowing great photos to be taken in even very dim situations. Finally, as people who regularly use DSLR cameras may have more experience and skill in capturing higher quality images. They mentioned that training their model on such photos allows the model to learn important photo features and recognize great photos even when they are not taken by a DSLR camera. They trained model using AlexNet and GoogLeNet and tested on manually labelled photos. The performance achieved by Yelp’s model is given below.
+				<br><br>            
+            <div style="text-align: center;">
+               <img style="height: 130px;" alt="" src="images/scorer_precision.png">
+            </div>
+            <br>
+            First model is AlexNet trained using 100K photos, second model is trained on 1M photos and third model of GoogLeNet is trained using 1M photos. They are tested on thousands of photos manually labelled by Yelp.
+            <br><br>
+            The limits of the approach are:
+            <ul>
+               <li>Finding just the good quality photos is not enough to help users and businesses and to improve the cover photos as the photos also need to be relevant</li>
+               <li>Most of the photos uploaded on Yelp are taken using mobile phones as people generally do not carry DSLR to Restaurants and the model may not work well on them</li>
+               <li>All photos taken on DSLR need not be beautiful photos and similarly all non-DSLR photos need not be not beautiful</li>
+            </ul>
+            <h4>Who cares? If you are successful, what difference will it make?</h4>
+            My success makes the following differences:
+            <ul>
+               <li>Yelp users upload around 100,000 photos a day to a collection of tens of millions, and the rate continues to grow. In fact, Yelp is seeing a growth rate for photos that is outpacing the rate of reviews. These photos provide a rich tapestry of information about the content and quality of local businesses. If I am successful, then with the help of this automated system which can handle the growth rate of yelp photos, we can make sure that the cover pictures that a user sees, are the best ones by being both of good quality and informative. It will save a user’s time and also benefit restaurants and business owners by providing a better first impression and in turn helping the Yelp’s business.</li>
+               <li>Currently my focus is just on Restaurants and it can be easily extended to all types of businesses in Yelp based on the relevance criteria</li>
+               <li>It can be easily extended to provide sorting of the images by converting the probability of photo being good as a score which would be greatly helpful in sorting cover photos</li>
+               <li>It can be used for different platforms such as Yelp, Google Restaurants, Foursquare etc.</li>
+            </ul>
+            <!-- Approach -->
+            <h2>Approach</h2>
+            <h4>What did you do exactly? How did you solve the problem? Why did you think it would be successful? Is anything new in your approach?</h4>
+            The below diagram shows the Yelp’s approach and my approach. Yelp tried to find just beautiful (quality) photos but I am trying to find both quality and informative photos.
+            <div id="yelpmodelfigure" style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/Yelp's_model.png">
+               <br>
+               <div>Figure: Difference between Yelp's model and my model</div>
+            </div>
+            <br>
+            <b>Data</b>
+            <br>
+            The dataset posted by Yelp has 280992 photos (~10GB) of 188,593 businesses. There are 1305 distinct businesses in total with most common ones being Restaurants, Shopping, Beauty and Spas, Home Services and Health & Medical. My focus is on Restaurants which are around 57,000 among 188,593 businesses. I sampled 250 Restaurants with 4038 photos with 3525 for training and 513 for testing.
+            <br><br>
+            <b>Test Set</b>
+            <br>
+            According to me the good photo has following features under informative and quality domains. 
+            <div style="text-align: center;">
+               <img style="height: 270px;" alt="" src="images/what_is_good_photo.png">
+            </div>
+            Yelp did not provide labels to any photos. The test set is manually given two labels one for quality and other for informativeness based on the above features.<br>
+            For example,<br> 
+            <div style="text-align: center;">
+            <div>
+               <img style="height: 180px;" alt="" src="images/useful_not_beautiful_food.png">
+            </div>
+            This is informative as it has food but not beautiful due to blurriness
+            <br><br>
+            <div>
+               <img style="height: 180px;" alt="" src="images/chef_good_quality.png">
+            </div>
+            This is beautiful (quality) but not infromative
+         </div>
+            <br>
+            Hence test set is given two labels based on above criteria. Comparing the goodness of photos can seem like a very subjective task. What makes one photo preferable to another can depend on many factors and may be different depending on the user who is performing a search. So general idea and rubrics were used. The test set is labelled thrice through the whole process. That is because when the model is tested and after looking at false positives and false negatives, a clear disagreement with manual labels was seen. It was surprising most of the times why the picture was labelled not beautiful or not informative. So, manually labelling the test set was a huge important task. 
+            <br><br>
+            <b>Train Set</b><br>
+            The train set is to be created by labelling in terms of both quality and informativeness. To label the train set for quality, I used Neural Image Assessment (NIMA) CNN model created by Google which rates an image in terms of good looking/attractiveness on a scale of 1 to 10. 
+            <br><br>
+            The NIMA architecture<sup><a href="#ref4">[4]</a></sup> is given below.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 130px;" alt="" src="images/NIMA_arch.png">
+            </div>
+            <br><br>
+            
+            Their proposed quality and aesthetic predictor stands on modified baseline image classifier network. More explicitly, a few different classifier architectures such as VGG16, Inception-v2, and MobileNet were explored for image quality assessment task. 
+            <br><br>
+
+            For this project, MobileNet which is an efficient deep CNN base mainly designed for mobile vision applications is chosen. In this architecture, dense convolutional filters are replaced by separable filters. This simplification resulted in smaller and faster CNN models. Last layer of classifier network is replaced by a fully-connected layer to output 10 classes of quality scores. Baseline network weights are initialized by training on ImageNet dataset, and the added fully-connected weights are initialized randomly. 
+            <br><br>
+
+            The NIMA model is trained on the three datasets of AVA, TID2013 and LIVE. For this project, AVA dataset is chosen. AVA is Large-Scale Database for Aesthetic Visual Analysis dataset which contains about 255,000 images, rated based on aesthetic qualities by amateur photographers.
+            <br><br>
+
+            Soft-max cross-entropy is widely used as training loss in classification tasks. However, in the case of ordered-classes (e.g. aesthetic and quality estimation), as cross-entropy loss lacks the inter-class relationships between score buckets. As training on datasets with intrinsic ordering between classes can benefit from EMD(Earth Mover’s Distance) based losses by penalizing mis-classifications according to class distances was used. 
+            <br><br>
+
+            Some test photos from the large-scale database for Aesthetic Visual Analysis (AVA) dataset, as ranked by NIMA, are shown below. 
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 400px;" alt="" src="images/AVA_photos.png">
+            </div>
+            <br>
+            After training, the aesthetic ranking of these photos by NIMA were found to closely match the mean scores given by human raters. They found that NIMA performs equally well on other datasets, with predicted quality scores close to human ratings. This is the reason this model is chosen to label the Yelp photos in terms of quality.
+            <br><br>
+            <b>Analysis of NIMA using test data labels of both “Quality” and “Informative”</b>
+            <br>
+            To understand the performance of NIMA, used NIMA MobileNet model to label the test photos as beautiful or not based on quality. The scores were mostly in between 3 and 7 and are normalized between 0 and 1. Different thresholds from 0.1 to 0.9 were tried and all photos above threshold are labelled as good quality and the ones below as not. The correlation of these labels with manually assigned labels is measured. As threshold increased true positives decreased and true negatives increased. 0.5 gave a good balance of values. 
+            <br><br>
+            Initially there was a plan to just use NIMA as it is a deep CNN that is trained to predict which images a typical user would rate as looking good (technically) or attractive (aesthetically) which gives a quality label and also as it relies on the success of state-of-the-art deep object recognition networks, building on their ability to understand general categories of objects despite many variations which gives informative label. 
+            <br><br>
+            <b>Issue with NIMA:</b>
+            <br>
+            The NIMA assigned labels on Test Set are evaluated using manually assigned quality and informative labels. An issue of false positives given below was seen.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 400px;" alt="" src="images/False_positives.png">
+            </div>
+            <br><br>
+            As we can see most of the false positives were interior or outdoor photos where the model couldn’t recognize the objects. So, it was understood that NIMA could predict the quality score better than information. To deal with this issue Clarifai, an object detection CNN Model was incorporated which will be explained in the later section.
+            <br><br>
+            <b>Analysis of NIMA using test data label of just “Quality”</b>
+            <br>
+            Then, NIMA is evaluated using just the quality labels and the following performance is observed.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/NIMA_performance_accuracy_precision.png">
+            </div>
+            <br>
+            <div style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/true_neg_positives.png">
+            </div>
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/false_positives_false_negatives.png">
+            </div>
+            <br><br>
+            The precision was decent, but it had a bad accuracy. Found a pattern in false negatives based on contrast and brightness. To deal with this issue, following heuristics were added.
+				<br><br>            
+            <div style="text-align: center;">
+               <img style="height: 110px;" alt="" src="images/added_heuristics.png">
+            </div>
+            <br><br>
+            <b>Analysis of NIMA + Heuristics using test data label of just “Quality”</b>
+            <br>
+            The photos labelled by NIMA as not beautiful are further evaluated using these metrics. After adding these metrics, the following improvement is seen.
+				<br><br>            
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/analysis_NIMA_Heu1.png">
+            </div>
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/precision_total_precision_NIMA_combined.png">
+            </div>
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/false_negatives.png">
+            </div>
+            <br><br>
+            Both the accuracy and precision had improved and the issue of false negatives reduced. Thus, NIMA with heuristics is chosen to label photos for quality.
+            <br><br>
+            <b>Clarifai</b>
+            <br>
+            Now, to deal with informativeness of the photos, Clarifai - an object detection CNN Model<sup><a href="#ref3">[3]</a></sup> is employed. The core of Clarifai's technology is based on convolutional neural networks and is a process which enables a computer to learn from data examples and draw its own conclusions, giving applications the ability to predict correct tags for images or videos. It has pre-built recognition models that can identify a specific set of concepts like food or travel, and its general model which can identify a range of concepts including objects, ideas, and emotion. The latest Model 1.5 with machine-labeled datasets claims to recognize up to 11,000 concepts from object detection, as well as things like mood or theme.
+            <br><br>
+            It can detect different concepts like Food, Person, Interior, Drink, Outdoors etc. It gives probability for these different concepts in a photo. By considering a good threshold of 0.8 for each and considering the photos with less cluttering of people the photos are labelled informative or not. Some of the examples of probabilities are shown below. 
+            <br><br>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/probability_987.png">
+
+            </div>
+            
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/probability_985.png">            
+
+            </div>
+            </div>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+				Probability of Food: 0.987
+				</div>
+				<div class="column" style="text-align: center;">
+				Probability of Drink: 0.995
+				</div>
+            </div>
+            
+				<div class="row">
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/probability_927.png">
+            </div>
+            
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/probability_991.png">            
+            </div>
+            </div>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+				Probability of Indoors: 0.927
+            </div>
+            <div class="column" style="text-align: center;">
+				Probability of Outdoors: 0.991
+            </div>
+				</div>
+            <br><br>
+            <b>Analysis of Clarifai using “informative” labels</b>
+            <br>
+            By considering a good threshold of 0.8 for each and considering the photos with less cluttering of people the photos are labelled informative or not, the following correlation with manual “informative” labels is achieved.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 220px;" alt="" src="images/accuracy_precision_recall_table.png">
+            </div>
+            <br>
+            As it can be seen, the results were good enough on Food and Drink compared with Outside and Inside. But the overall performance is quite good with accuracy around 90.8% and precision and recall more than 93%. 
+            <br><br>
+            Easy and Hard cases of different categories are analyzed.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 350px;" alt="" src="images/food_easy_hard_cases.png">
+            </div>
+            As we can see the false positives, there is real food but not the ones we are interested in. And it is definitely a hard case. 
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 350px;" alt="" src="images/drinks_easy_hard_cases.png">
+            </div>
+            With drinks, we can see the false positive picture which actually has drink but not in a way we expect. 
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 350px;" alt="" src="images/inside_easy_hard_cases.png">
+            </div>
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 350px;" alt="" src="images/outside_easy_hard_cases.png">
+            </div>
+            Inside, and outside have been a difficult cases but with decent performance. 
+            <br><br>
+            By introducing Clarifai, the issue of False Positives from using just NIMA mitigated and the improvement is shown below. It has to be noted that this improvement is over using just NIMA not NIMA with heuristics.
+				<br>            
+            <div style="text-align: center;">
+               <img style="height: 110px;" alt="" src="images/false_positives_true_negatives_table.png">
+            </div>
+            <br>
+            <b>Train and Test Sets</b>
+            <br>
+            As there is a great correlation of NIMA+Heuristics with “beautiful” labels and Clarifai heuristics with “informative” labels, the train data is labelled based on being both beautiful and informative. The test set as mentioned above is labelled manually. These two methods gave the following spilt of data.
+				<br><br>            
+            <div style="text-align: center;">
+               <img style="height: 110px;" alt="" src="images/set_split_table.png">
+            </div>
+            <br>
+            <b>Models</b>
+            <br>
+            Using these, train and test sets, three models were tried out.
+            <ol>
+               <li>Transfer Learning using AlexNet</li>
+               <li>Transfer Learning using VGG-16 as Feature Extractor</li>
+               <li>Own CNN architecture</li>
+            </ol>
+            These are explained in detail in later section. 
+            <br><br>
+            I thought I would be successful because clear drawback in the Yelp’s assumptions and approach was observed but was skeptical. Just wanted to see if I could add any value by introducing a better metric for quality and altogether a new concept of informativeness. The new factor in my approach is introducing the concept of informativeness, improvising the quality assessment approach and also considering the fact that most photos uploaded on yelp are not taken using DSLR.
+            <br><br>
+            <!-- Results -->
+            <h2>Experiments and Results</h2>
+            <h4>How did you measure success? What experiments were used? What were the results, both quantitative and qualitative? Did you succeed? Did you fail? Why?</h4>
+            <b>Performance Evaluation</b>
+            <br>
+            The performance of the model is evaluated using Accuracy and Precision and with emphasis on Precision. This is because since the photos are huge in number, it is okay to lose a good photo as a bad (false negatives) one but it is not acceptable to have a bad photo as good (false positives) because these good photos are used as cover photos.
+            <br><br>
+            <b>Experiments</b>
+            <br>
+            To start off, just went with Yelp’s best model, AlexNet. Yelp retrained the whole network due the dataset size of 1M photos. This is a form of transfer learning where a pretrained model is fine tuned by continuing the backpropagation. It is possible to fine-tune all the layers of the ConvNet, or to keep some of the earlier layers fixed (due to overfitting concerns) and only fine-tune some higher-level portion of the network. This is because as earlier features of a ConvNet contain more generic features (e.g. edge detectors or color blob detectors) that should be useful to many tasks, but later layers of the ConvNet becomes progressively more specific to the details of the classes contained in the original dataset. And yelp retrained the whole network confidently without overfitting concern as the dataset is large enough.
+            <br><br>
+            As my sampled dataset is relatively small, transfer learning using is used by fine tuning only the AlexNet’s fully connected layers which contain Imagenet specific features. The reason behind this is since AlexNet is trained on ImageNet which has learned some of the concepts of current problem as object shapes give information and so the initial layers would be helpful. 
+            <br><br>
+            <b>1. AlexNet</b>
+            <br>
+            AlexNet is a Convolutional Neural Network with five convolutional layers, three fully connected layers, overlapping max pooling, ReLU activation and dropout regularization and is shown below.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 300px;" alt="" src="images/ReLU_activation.png">
+            </div>
+            As the final layers contain features specific to the dataset, the final layers were re-trained. The output of classifier is modified for two classes. Following three models were tried.
+            <ol>
+               <li><b>Model A:</b> Retraining the last fully connected layer</li>
+               <li><b>Model B:</b> Retraining the last two fully connected layers</li>
+               <li><b>Model C:</b> Retraining the three fully connected layers</li>
+            </ol>
+            <b>Implementation Details</b>
+            The path to input train and validation photos directory is given and data tensors are generated from input images using Tensorflow’s ImageDataGenerator. GradientDescentOptimizer and Cross Entropy loss are used.
+            <br><br>
+            <b>Hyperparameters</b> tuned are:
+            <ul>
+               <li>Layers to train</li>
+               <li>Learning rate</li>
+               <li>Dropout rate</li>
+               <li>Number of epochs</li>
+            </ul>
+            Different values are tried out and the parameters which gave best performance are picked.
+            <br><br>
+
+            <b>Results</b>
+            <br>
+            With just NIMA + Clarifai (with just ‘Food’ concept), following performance is achieved.
+            <br>
+            <div style="text-align: center;">
+               <img style="height: 65px;" alt="" src="images/Nima_clarifai.png">
+            </div>
+            <br>
+            By adding heuristics to NIMA and all other concepts to Clarifai following results are achieved.
+            <br><br>
+            <b><u>Analysis</u></b>
+            <br>
+            <b>Model A:</b> Retraining the last fully connected layer
+            <br><br>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelA_accuracy.png">
+            </div>
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelA_cross_entropy.png">
+            </div>
+            </div>
+            <br>
+            As we can see accuracy is increasing with time and cross entropy loss is decreasing. 
+            <br><br>
+            The following photos are agreed and disagreed by AlexNet and test labels. 
+            <br><br>
+            <b>Agree</b>
+            <br>
+            
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelA_agree.png">
+            </div>
+            <br>
+            <b>Disagree</b>
+            <br>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelA_disagree.png">
+            </div>
+            <br>
+            <b>Learning information more than beauty</b>
+            <br>
+            After verifying the correlation of labels assigned by AlexNet with manually assigned labels of “Quality” and “Informative”, there is a greater agreement with informativeness rather than quality which says that the model was able to learn about information more than beauty.
+            <br><br>
+
+            <b>Model B:</b> Retraining the last two fully connected layers
+            <br><br>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelB_accuracy.png">
+            </div>
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelB_crossEntropy.png">
+            </div>
+            </div>
+            <br>
+            As we can see accuracy is increasing with time and cross entropy loss is decreasing. 
+            <br><br>
+				<b>Agree</b>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelB_agree.png">
+            </div>
+            <br>
+            <b>Disagree</b>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelB_disagree.png">
+            </div>
+            <br>
+            <b>Learning usefulness more than beauty -</b> Even in this model, most of the photos labelled right were informative but not of great quality.
+            <br><br>
+            <b>Model C:</b> Retraining the three fully connected layers
+            <br><br>
+            <div class="row">
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelC_accuracy.png">
+            </div>
+            
+            <div class="column" style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelC_crossentropy.png">
+            </div>
+            </div>
+            <br>
+            As we can see accuracy is increasing with time and cross entropy loss is decreasing. 
+            <br><br>
+
+            <b>Agree</b>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelC_agree.png">
+            </div>
+            <br>
+            <b>Disagree</b>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/modelC_disagree.png">
+            </div>
+            <br>
+            <b>Learning information and beauty (not to great extent)</b> This model is learning usefulness and beauty but not to a great extent.
+            <br>
+            <div style="text-align: center;">
+               <img style="height: 200px;" alt="" src="images/validation_Accuracy.png">
+            </div>
+            <br>
+            Comparison of accuracy, precision and runtimes of three models is given below.
+            <div style="text-align: center;">
+               <img style="height: 170px;" alt="" src="images/modelABC_accuracy_precision_.png">
+            </div>
+            <br>
+            <b>Runtime Evaluation:</b> cpu(i7) 2.20GHz, 8GB RAM
+            <div style="text-align: center;">
+               <img style="height: 170px;" alt="" src="images/modelABC_training_testing.png">
+            </div>
+            <br>
+            AlexNet with transfer learning is overfitting due to small dataset size. Even fine tuning the final fully connected layers didn’t seem to work well with the dataset size.  
+            <br><br>
+            <b>2. VGG-16 as Feature Extractor</b>
+				<br>
+            To avoid the overfitting issue by fine-tuning using small dataset, transfer learning by extracting features strategy is tried out. Support Vector Machine classifier is chosen as it can deal with high dimensional data without overfitting. The features are extracted using VGG-16 model. Nima with heuristics and Clarifai labels are added as features.  
+            <br><br>
+            The architecture of VGG-16 model is given below. It has 13 convolutional layers followed by 3 fully connected layers.
+            <br>
+            <div style="text-align: center;">
+               <img style="height: 270px;" alt="" src="images/VGG-16.png">
+            </div>
+            <br><br>
+            Following two models are tried.
+            <ol>
+               <li><b>Model A: Using Penultimate layer features - </b>Since the dataset is small and partially similar to the original dataset (Imagenet) on which VGG-16 is trained on and expecting higher level features (specific to dataset trained on) to be relevant to this dataset.</li>
+               <ul>
+                  <li>1*7*7*512 = 25K features are extracted</li>
+                  <li>NIMA with heuristics and clarifai labels are added as features</li>
+               </ul>
+               <li><b>Model B: Using Antepenultimate layer features - </b>Since the dataset is small and partially dissimilar to the original dataset, it might work better if SVM is trained from activations somewhere earlier in the network which has generic features.</li>
+               <ul>
+                  <li>1*14*14*512 = 100K features are extracted. Performed Principal Component Analysis <b>(PCA) </b> to perform dimensionality reduction</li>
+                  <li>NIMA with heuristics and clarifai labels are added as features</li>
+               </ul>
+            </ol>
+            <b>Implementation details</b><br>
+            Keras library is used on top of Tensorflow to extract features at different layers using VGG-16 model. For each photo in the train set, features are extracted after performing preprocessing using preprocess_input function and are appended to the numpy array. Support Vector Machines classifier from scikit-learn library is used to model the classifier. The parameters of gamma, kernel, C values are selected using cross validation using GridSearchCV. 
+				<br><br>
+				<b>Results</b><br>
+            The results of both models are given below.
+            <br><br>
+            ● Machine A: Intel i7 2.4GHz. 8GB
+            <br>
+            ● Machine B: Google Cloud n1-standard-8 (8 vCPUs, 30 GB memory) 
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 170px;" alt="" src="images/SVM.png">
+            </div>
+            <br>
+            <b>Analysis</b>
+            <ul>
+               <li>Precision of both models was equal to the accuracy which is equal to the split percentage of positively labelled photos in test set (60-40 split)</li>
+               <li>The model is classifying almost all pictures as good photos</li>
+               <li><b>Reason:</b> Features extracted are not at all useful to model a good classifier. Partial similarity to the dataset is not enough to extract relevant features using transfer learning. Addition of quality and informative labels as features is not enough to make the classifier learn the corresponding features.</li>
+            </ul>
+            <b>3. Own CNN Models</b><br>
+            To avoid this issue, own CNN models are tried. Two best models are selected which have the below architectures.
+				<br><br>            
+            <ul>
+               <li><b>Architecture 1</b>&nbsp;&nbsp;[conv-relu-pool]x3 - [conv-relu] - [affine]x3 - [softmax]</li>
+               <ul>
+               	<li>First Conv layer has 32 filters of 3*3</li>
+               	<li>Second Conv layer has 64 filters of 3*3</li>
+               	<li>Third Conv layer has 128 filters of 3*3</li>
+               	<li>Fourth Conv layer has 128 filters of 3*3</li>
+               	<li>Max pooling of 2*2</li>
+               	<li>Affine layers are of 128,64,32 </li>
+               </ul>
+               <br>
+               <li><b>Architecture 2</b>&nbsp;&nbsp;[conv-relu-pool]x3 - [affine]x3 - [softmax]</li>
+                <ul>
+               	<li>First Conv layer has 32 filters of 3*3</li>
+               	<li>Second Conv layer has 64 filters of 3*3</li>
+               	<li>Third Conv layer has 128 filters of 3*3</li>
+               	<li>Max pooling of 2*2</li>
+               	<li>Affine layers are of 128,64,32 </li>
+               </ul>
+            </ul>
+            <b>Implementation Details</b><br>
+            Keras library is used on top of Tensorflow to create the models. AdamOptimizer is used with sparse_categorical_crossentropy as the targets are integers (1 for good and 0 for bad). Max Pooling is used. 
+				<br><br>
+            <b>Results</b><br>
+            The results of two models is given below.
+            <br><br>
+            <div class="row">
+            <div class="column">
+               <img style="height: 220px;" alt="" src="images/training_accuracy.png">
+            </div>
+            <div class="column">
+               <img style="height: 220px;" alt="" src="images/training_accuracy_increased.png">
+            </div>
+            </div>
+            <br><br>
+            Train accuracy is increasing steadily with each epoch.The validation accuracy fluctuated for model 1 and stabilized after a point. For model 2 it started increasing after a point which shows no overfitting.
+            <br><br>
+            <div class="row">
+            <div class="column">
+               <img style="height: 220px;" alt="" src="images/validation_accuracy_graph.png">
+            </div>
+            
+            <div class="column">
+               <img style="height: 220px;" alt="" src="images/test_accuracy_increased.png">
+            </div>
+            </div>
+            <br>
+            Test accuracy increased rapidly initially and stabilized after a point for both models and same is the case with test precision.
+            <br><br>
+            The Precision and Accuracy details are given below.
+            <br>
+            <div>
+               <img style="height: 100px;" alt="" src="images/precision_accuracy.png">
+            </div>
+            <br>
+            <b>Model 1 achieved highest precision of 0.86 which equals Yelp’s best precision using AlexNet (1M)</b>. But the comparison is not valid as Yelp’s model is just for quality and test set is different. Still, this shows that I succeeded at my attempt. 
+            <br><br>
+            Accuracies and Precisions of different concepts is given below.
+            <br>
+            <div class="row">
+            <div class="column">
+               <img style="height: 250px;" alt="" src="images/food_chart_bar.png">
+            </div>
+            <div class="column">
+               <img style="height: 250px;" alt="" src="images/model3_chart_bar.png">
+            </div>
+            </div>
+				<br>          
+            Model 1 did well in terms of Food and Drink, whereas Model 2 did well in terms of outside and inside. But overall, model 3 had higher accuracy. 
+            <br>In terms of precision, Model 1 did well in drinks and in overall, but Model 2 did well in food and inside categories. None of the models did well in outside scenarios.
+            <br><br>
+            As Precision is really important for the structure of the chosen problem, Model 1 with highest precision is chosen. The issue of False Positives is seen and some of the examples are shown below. 
+            <br>
+				<div class="row">
+            <div class="column">
+               <img style="height: 250px;" alt="" src="images/false_pos_ex2.png">
+            </div>
+            
+            <div class="column">
+               <img style="height: 250px;" alt="" src="images/false_pos_ex3.png">
+            </div>    
+            <div class="column">
+               <img style="height: 170px;" alt="" src="images/false_pos_ex1.png">
+            </div>
+            </div>  
+            <br>
+            These examples clearly fall under food and inside categories and that means the model learned the concept of information well but all of them seem to have this kind of contrast which created a doubt on model learning about the quality. To verify the same. The labels assigned by the best model is compared with the manual labels of “quality” and “informativeness”. The accuracy of informativeness is found to be more than that of quality as shown below.
+            <br><br>
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/accuracy_chart_table.png">
+            </div>
+            <br>
+            This shows that the model learned informativeness more than quality.
+            <br><br>
+            The anticipated reasons are as follows.
+            <ol>
+               <li>Most of the photos do not have EXIF data which says that they are not many DSLR photos and that means the sample has few photos of good quality. It may be due to the sampling or if the whole dataset is similar</li>
+               <li>The NIMA scores were found to be between 3-6 and there were no photos in higher and lower ranges which says that most of the photos are in medium range and the model didn’t get to learn a lot about quality from them </li>
+            </ol>
+            <b>Comparison of three models</b>
+            <div style="text-align: center;">
+               <img style="height: 250px;" alt="" src="images/3model_comparison.png">
+            </div>
+            <br><br>
+            We can see the best model in terms of precision is own CNN model and worst is the SVM with VGG-16 features. 
+            <br><br>
+            Just to show some real time testing, the following is a picture of cover photos of <a href="https://www.yelp.com/biz_photos/buttermilk-kitchen-atlanta">Buttermilk Kitchen restaurant</a>.
+            <div style="text-align: center;">
+               <br>
+               <img style="height: 400px;" alt="" src="images/butter_restaurant.png">
+            </div>
+            <br><br>
+            As we can see most of the photos look cluttered and not appealing. Best CNN model could eliminate some of the photos as shown below. Don’t you find this amazing? But I did!
+            <div style="text-align: center;">
+               <br>
+               <img style="height: 400px;" alt="" src="images/butter_restaurant_1.png">
+            </div>
+            <br><br>
+            <h4>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</h4>
+            <b>Problems Anticipated:</b
+            <ul>
+               <li>Dealing with Huge Dataset</li>
+               <li>Will the new labelling approach feasible?</li>
+               <li>Will the new labelling metric of NIMA work?</li>
+               <li>Adding a new concept of informativeness itself. Will clarifai add any value?</li>
+               <li>The transfer learning altogether</li>
+            </ul><br>
+            <b>Problems Encountered:</b>
+            <ul>
+               <li>As described above, the first Issue encountered with NIMA False Positives and then with false negatives</li>
+               <li>Clarifai false positives issue</li>
+               <li>Overfitting issue with AlexNet transfer learning</li>
+               <li>Transfer learning by extracting VGG-16 features didn’t work</li>
+               <li>Dealing with huge dataset. Sampling, extracting corresponding photos, runtimes of models, dealing with 100K features extracted from VGG-16</li>
+            </ul>
+            <div style="text-align: center;">
+               <br>
+               <img style="height: 400px;" alt="" src="images/Yelp's_model_classify.png">
+            </div>
+            <br>
+            First things did not work in all three levels of the pipeline explained in <a href="#yelpmodelfigure">Figure: My model</a>. In first step of labelling the train set, using just NIMA to give final label of “good” didn’t work out as it could deal with quality better than “informativeness”. To avoid this, Clarifai is employed. To deal with false negatives, heuristics are incorporated. In the third step of manually labelling the test set, the first set of labels seemed unreasonable after observing couple of results and same thing happened with second iteration and in third iteration the task of labelling got general with standard rubrics described above. In the second stage of pipeline, transfer learning using AlexNet ovefit and SVM with VGG-16 features is chosen which did really bad altogether and then own CNN architecture worked out finally. All this process created a great understanding of the problem structure and feasible models and the model can be made better now by training with larger dataset. 
+            <br><br>
+            <b>Technologies Used and Code</b>
+            <ul>
+            	<li>Tensorflow along with Keras, scikit-learn libraries are used for NIMA, AlexNet, VGG-16, own CNN</li>
+            	<li>Python is used for rest work like sampling, analysis etc</li>
+            	<li>Link to code: <a id="Code" href="https://drive.google.com/file/d/1A4y4-0POr0ArtNrLPr2fZSOZ27s65RgR/view?usp=sharing">https://drive.google.com/file/d/1A4y4-0POr0ArtNrLPr2fZSOZ27s65RgR/view?usp=sharing </a> </li>
+            </ul>
+            <b>What is learned?</b>
+            <ul>
+					<li>Dealing with huge dataset and working on a larger dataset brings different challenges, and does not always result in better machine learning models</li>
+					<li>Classification without labels is a hard problem</li>
+					<li>Keeping in mind the context of the problem and the nuances of the dataset one is dealing with, can help better understand the results</li>
+					<li>Finding and understanding relevant work, and analyzing the applicability to our problem is important</li>
+            </ul>
+            <br>
+            <h4>References</h4>
+            [1] <a id="ref1" href="https://www.yelp.com/dataset/challenge"> https://www.yelp.com/dataset/challenge</a><br>
+            [2] <a id="ref2" href="https://engineeringblog.yelp.com/2016/11/finding-beautiful-yelp-photos-using-deep-learning.html">https://engineeringblog.yelp.com/2016/11/finding-beautiful-yelp-photos-using-deep-learning.html</a><br>
+            [3] <a id="ref3" href="https://clarifai.com/demo">https://clarifai.com/demo</a><br>
+            [4] <a id="ref4" href="https://arxiv.org/pdf/1709.05424.pdf">https://arxiv.org/pdf/1709.05424.pdf</a><br>
+            [5] <a id="ref5" href="https://ai.googleblog.com/2017/12/introducing-nima-neural-image-assessment.html">https://ai.googleblog.com/2017/12/introducing-nima-neural-image-assessment.html</a><br>
+            [6] <a id="ref6" href="https://en.wikipedia.org/wiki/Clarifai">https://en.wikipedia.org/wiki/Clarifai</a><br>
+            [7] <a id="ref7" href="http://cs231n.github.io/transfer-learning/">http://cs231n.github.io/transfer-learning/</a><br>
+            [9] <a id="Yelp" href="https://engineeringblog.yelp.com/2016/04/yelp-kaggle-photo-challenge-interview-1.html">https://engineeringblog.yelp.com/2016/04/yelp-kaggle-photo-challenge-interview-1.html</a><br>
+            [10] Wu, Yaowen & Bauckhage, Christian & Thurau, Christian. (2010). The Good, the Bad, and the Ugly: Predicting Aesthetic Image Labels. 1586-1589. 10.1109/ICPR.2010.392. 
+            <hr>
+            <footer>
+               <p>© Nikhita Karnati</p>
+            </footer>
+         </div>
+      </div>
+      <br><br>
+   </body>
+</html>
