@@ -1,0 +1,2 @@
+Penultimate layer Features are extracted and trained&tested SVM in VGG16.ipynb
+AntePenultimate layer Features are extracted and trained SVM in vgg16_AntePenultimate.py and tested in vgg16_AntePenultimate_test.py
